@@ -1,0 +1,67 @@
+buildscript {
+    ext {
+        springBootVersion = '2.0.0.BUILD-SNAPSHOT'
+    }
+    repositories {
+        mavenCentral()
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+
+jar {
+    baseName = 'bank-exchange-server'
+    version = '0.0.1-SNAPSHOT'
+}
+
+springBoot {
+    executable = true
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/milestone" }
+}
+
+configurations {
+    compile.exclude module: 'spring-boot-starter-logging'
+    compile.exclude module: 'spring-boot-starter-tomcat'
+}
+
+processResources {
+    expand(project.properties)
+    exclude('log4j2.json')
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-webflux')
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.boot:spring-boot-starter-log4j2:1.5.1.RELEASE')
+    compile('org.springframework.boot:spring-boot-starter-data-mongodb-reactive')
+
+    compile('io.projectreactor.ipc:reactor-netty')
+    compile('org.jsoup:jsoup:1.10.2')
+    compile('org.apache.commons:commons-lang3:3.5')
+
+    runtime('de.flapdoodle.embed:de.flapdoodle.embed.mongo')
+    runtime('org.springframework.boot:spring-boot-devtools')
+
+    compileOnly('org.projectlombok:lombok')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.boot.experimental:spring-boot-dependencies-web-reactive:0.1.0.BUILD-SNAPSHOT"
+    }
+}
